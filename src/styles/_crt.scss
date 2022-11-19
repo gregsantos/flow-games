@@ -1,0 +1,112 @@
+@use "variables" as v;
+
+#screen {
+  overflow: hidden;
+  box-shadow: 0 0 1px 3px rgba(10, 10, 10, 0.7);
+
+  &::before {
+    @include v.fill();
+
+    content: "";
+    box-shadow: inset 0 0 v.$base-unit (v.$base-unit / 2) rgba(#fff, 0.08);
+  }
+
+  &::after {
+    @include v.fill();
+
+    content: "";
+    opacity: 0.1;
+    background: linear-gradient(
+      rgba(255, 255, 255, 0.8),
+      rgba(255, 255, 255, 0.2)
+    );
+  }
+}
+
+#green-light {
+  @include v.fill();
+
+  &::before {
+    @include v.fill();
+
+    content: "";
+    background: radial-gradient(
+      ellipse at center,
+      rgba(v.$gradient-bottom, 0) 0%,
+      rgba(v.$gradient-bottom, 0.5) 100%
+    );
+    pointer-events: none;
+  }
+
+  &::after {
+    @include v.fill();
+
+    content: "";
+    opacity: 0.5;
+    background: radial-gradient(
+      ellipse at center,
+      rgba(v.$gradient-inner, 1) 0%,
+      rgba(v.$gradient-inner, 0) 100%
+    );
+    pointer-events: none;
+    animation: glow 2s linear infinite;
+  }
+}
+
+@media (min-width: 1200px) {
+  #green-light {
+    animation: pulse 5s linear infinite;
+  }
+}
+
+#interlace {
+  @include v.fill();
+
+  z-index: 1;
+  opacity: 0.15;
+  background: v.$interlace-background;
+  background-size: 100% v.$interlace-size;
+  background-repeat: repeat-y;
+}
+
+#scanline {
+  position: absolute;
+  width: 100%;
+  height: 1em;
+  background: linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(255, 255, 255, 0.2) 10%,
+    rgba(0, 0, 0, 0.1) 100%
+  );
+  opacity: 0.15;
+  bottom: 100%;
+  pointer-events: none;
+  animation: scanline 15s linear infinite;
+}
+
+#terminal {
+  width: 100%;
+  height: 100%;
+
+  textarea {
+    display: block;
+    background: transparent;
+    resize: none;
+    width: 100%;
+    height: 100%;
+    border: 0 none;
+    outline: 0 none;
+    box-sizing: border-box;
+    pointer-events: none;
+    margin: 0;
+    overflow: hidden;
+    padding: v.$base-unit;
+    color: v.$output-color;
+    text-shadow: 0 0 2px v.$output-text-shadow;
+    font-size: inherit;
+    animation: blur 5s linear infinite;
+    line-height: v.$output-line-height;
+    white-space: pre-wrap;
+  }
+}

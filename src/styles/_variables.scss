@@ -1,0 +1,20 @@
+$background-color: #000;
+$color: #fff;
+$base-unit: 1em;
+$font-size: 18px;
+$interlace-background: linear-gradient(#888 50%, #000 50%);
+$interlace-size: 4px;
+$output-font-family: "monofont";
+$output-color: #18ff62;
+$output-text-shadow: rgba(10, 255, 10, 0.8);
+$output-line-height: 1.25;
+$gradient-bottom: rgb(0, 30, 30);
+$gradient-inner: rgb(0, 255, 119);
+
+@mixin fill($top: 0, $left: 0, $right: 0, $bottom: 0) {
+  position: absolute;
+  left: $left;
+  top: $top;
+  right: $right;
+  bottom: $bottom;
+}

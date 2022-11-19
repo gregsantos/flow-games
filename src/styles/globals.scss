@@ -1,0 +1,175 @@
+@use "variables" as v;
+@use "crt" as c;
+@use "animations" as a;
+
+@import url("https://fonts.googleapis.com/css?family=VT323&display=swap");
+@import url("https://fonts.googleapis.com/css?family=Share+Tech+Mono&display=swap");
+
+/*********** VARIABLES *************/
+
+:root {
+  --green-color: #5bf870;
+  --green-bg: #05321e;
+  --red-color: #c0100a;
+  --red-bg: #1b0302;
+  --blue-color: #a5a5ff;
+  --blue-bg: #4242e7;
+  --off: #050505;
+  --dark: #111;
+  --term: "> ";
+}
+
+a {
+  outline: none;
+}
+
+::selection {
+  background: var(--green-color);
+  color: var(--green-bg);
+  text-shadow: none;
+}
+
+/*********** SLIDER ********************/
+
+#slider {
+  opacity: 1;
+  transition: top 1s ease-out, right 1s ease-out, opacity 1s ease-out;
+  animation: glow 3s ease-in-out infinite;
+}
+
+#slider.on {
+  opacity: 0.2;
+  animation: none;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--green-bg);
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: " ";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: var(--green-color);
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+  display: grid;
+  place-items: center;
+}
+
+input:checked + .slider {
+  background-color: var(--green-color);
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 6px 1px var(--green-color) inset;
+}
+
+input:checked + .slider:before {
+  background-color: var(--green-bg);
+  color: var(--green-color);
+  content: " ";
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+.newsbar-collection {
+  display: table-cell;
+  position: relative;
+  animation: markets-bar-marquee 35s linear infinite running;
+}
+
+.newsStory {
+  display: inline-block;
+  vertical-align: top;
+  line-height: 2.5rem;
+  padding: 0 1.25rem;
+}
+
+.newsStory a {
+  color: #eeeeee;
+  text-decoration: none;
+}
+
+.newsStory .publishedAt {
+  font-size: 0.7em;
+  color: var(--green-color);
+}
+
+@keyframes markets-bar-marquee {
+  0% {
+    left: 0;
+  }
+  100% {
+    left: -50%;
+  }
+}
+
+/*********** INPUT / OUTPUT *************/
+
+#prompt {
+  display: none;
+}
+[contenteditable] {
+  caret-color: transparent; /** Hides default browser caret */
+  outline: none;
+}
+#input {
+  position: relative;
+  display: block;
+  white-space: pre-wrap;
+}
+/* Inserts the > before terminal input */
+#input:before {
+  content: var(--term);
+}
+/* Puts a blinking square after the content as replacement for caret */
+#input[contenteditable="true"]:after,
+.typer.active:after {
+  content: "■";
+  animation: cursor 1s infinite;
+  animation-timing-function: step-end;
+  margin-left: 1px;
+  line-height: 1rem;
+}
+
+#input.password .char {
+  display: none;
+}
+#input.password:after {
+  color: var(--color);
+}
+#input.password:before {
+  color: var(--color);
+  content: var(--term) attr(data-pw);
+}
+
+.typer {
+  word-break: break-all;
+}
