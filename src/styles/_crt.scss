@@ -76,8 +76,8 @@
 
   z-index: 40;
   border-radius: v.$base-unit / 2;
-  animation: skew 4s linear infinite;
-  -webkit-animation: skew 5s linear infinite;
+  //  animation: skew 4s linear infinite;
+  //  -webkit-animation: skew 5s linear infinite;
   background: rgba(0, 0, 0, 0.25);
   border-radius: 0.5em;
   bottom: 2em;
@@ -123,6 +123,7 @@
   textarea {
     display: block;
     background: transparent;
+    caret-color: "red";
     resize: none;
     width: 100%;
     height: 100%;

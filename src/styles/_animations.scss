@@ -63,19 +63,19 @@
 
 @keyframes skew {
   0% {
-    transform: skewX(0.2deg);
+    transform: skewX(0.5deg);
   }
 
   8% {
-    transform: skewX(0.2deg) scale(1.0001);
+    transform: skewX(1deg) scale(1.0001);
   }
 
   15% {
-    transform: skewX(0.3deg) skewY(-0.05deg);
+    transform: skewX(0.6deg) skewY(-0.05deg);
   }
 
   30% {
-    transform: skewX(0.4deg);
+    transform: skewX(0.6deg);
   }
 
   100% {
