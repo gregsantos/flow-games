@@ -1,69 +1,22 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-nocheck
 import { useEffect, useRef } from "react";
+import { useRouter } from "next/router";
 import { Flex } from "@chakra-ui/react";
 import * as fcl from "@onflow/fcl";
-
-const banner = `
-        .........................................................................................
-                           
-      ********     **             *******       **       **
-      /**/////     /**            **/////**     /**      /**
-      /**          /**           **     //**    /**   *  /**
-      /*******     /**          /**      /**    /**  *** /**
-      /**////      /**          /**      /**    /** **/**/**
-      /**          /**          //**     **     /**** //****
-      /**          /********     //*******      /**/   ///**
-      //           ////////       ///////       //       //
-                                                 
-        @@@@@@@@     @@@@@@      @@@@@@@@@@     @@@@@@@@     @@@@@@   
-        @@@@@@@@@    @@@@@@@@    @@@@@@@@@@@    @@@@@@@@    @@@@@@@   
-        !@@          @@!  @@@    @@! @@! @@!    @@!         !@@       
-        !@!          !@!  @!@    !@! !@! !@!    !@!         !@!       
-        !@! @!@!@    @!@!@!@!    @!! !!@ @!@    @!!!:!      !!@@!!    
-        !!! !!@!!    !!!@!!!!    !@!   ! !@!    !!!!!:       !!@!!!   
-        :!!   !!:    !!:  !!!    !!:     !!:    !!:              !:!  
-        :!:   !::    :!:  !:!    :!:     :!:    :!:             !:!   
-        ::: ::::     ::   :::    :::     ::     :: ::::    :::: ::   
-        :: :: :      :   : :     :      :       : :: ::    :: : :  
-
-        -----------------------------------------------------------------------------------------
-        Flow Games is a collection of games built on Flow blockchain.
-        Games refers to models, simulations and games having tactical and strategic applications.
-        -----------------------------------------------------------------------------------------
-
-GREETINGS. SHALL WE PLAY A GAME?
-
-DEET'S MAZE
-BLACK JACK
-GIN RUMMY
-HEARTS
-BRIDGE
-CHECKERS
-CHESS
-POKER
-FIGHTER COMBAT
-GUERRILLA ENGAGEMENT
-DESERT WARFARE
-AIR-TO-GROUND-ACTIONS
-THEATREWIDE TACTICAL WARFARE
-THEATREWIDE BIOTOXIC AND CHEMICAL WARFARE
-GLOBAL THERMONUCLEAR WAR
-
-ROCK PAPER SCISSORS
-
-`;
+import { HOME_BANNER as banner, GAME_LIST as gameList } from "../constants";
 
 const helpText = `
 Available commands:
 
 help - This output
-contact - Prints contact information
-contact <key> - Opens up relevant contact link
-clear - Clears the display
+lg - List games
 ls - Lists files
 cd <dir> - Enters directory
 cat <filename> - Lists file contents
+contact - Prints contact information
+contact <key> - Opens up relevant contact link
+clear - Clears the display
 `;
 
 const contactInfo = {
@@ -349,19 +302,33 @@ const mountTerminal = (opts) => {
 };
 
 const HomeTerminal = () => {
+  const router = useRouter();
+
   const terminalRef: { current?: any } = useRef(null);
   const textAreaRef: { current?: any } = useRef(null);
 
+  const handleRps = () => {
+    router.push("play/rps");
+  };
+
   useEffect(() => {
-    window.addEventListener("focus", focus);
-    textAreaRef.current.addEventListener("click", focus);
     const t = mountTerminal({
       terminalRef,
       textAreaRef,
       prompt: () => `$ ${browser.cwd()} > `,
       banner,
       commands: {
+        1: () => "Game currently in development",
+        2: () => "Game currently in development",
+        3: () => "Game currently in development",
+        4: () => "Game currently in development",
+        5: () => "Game currently in development",
+        6: () => "Game currently in development",
+        7: () => "Game currently in development",
+        8: () => "Game currently in development",
+        9: () => handleRps(),
         login: () => fcl.authenticate(),
+        lg: () => gameList,
         help: () => helpText,
         cwd: () => browser.cwd(),
         cd: (dir) => browser.cd(dir),
@@ -382,12 +349,7 @@ const HomeTerminal = () => {
 
   return (
     <Flex id="terminal" ref={terminalRef} fontSize="1.15em">
-      <textarea
-        contentEditable
-        suppressContentEditableWarning
-        spellCheck="false"
-        ref={textAreaRef}
-      />
+      <textarea spellCheck="false" ref={textAreaRef} />
     </Flex>
   );
 };
