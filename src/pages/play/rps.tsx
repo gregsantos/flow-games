@@ -1,10 +1,25 @@
 import React from "react";
 import { Flex, Box, Grid, Stat, StatLabel } from "@chakra-ui/react";
+import {
+  Terminal,
+  useEventQueue,
+  textLine,
+  textWord,
+  commandWord,
+} from "crt-terminal";
 import ScreenLayout from "../../components/Layout";
 
+const bannerText = `
+FLOW SHAM BO
+
+LET'S PLAT ROCK PAPER SCISSORS!
+`;
+
 export default function Play() {
+  const eventQueue = useEventQueue();
+  const { print } = eventQueue.handlers;
   return (
-    <ScreenLayout title="Home">
+    <ScreenLayout title="Rock Paper Scissors">
       <Box flex={1} overflow="auto">
         <Grid
           minHeight="100%"
@@ -83,12 +98,37 @@ export default function Play() {
               Ad goes here
             </Flex>
           </Flex>
-          <Box
-            gridArea="m1"
-            p={3}
-            border="1px solid"
-            borderColor="green.300"
-          ></Box>
+          <Box gridArea="m1" border="1px solid" borderColor="green.300">
+            <div id="react-terminal" style={{ width: "100%", height: "100%" }}>
+              <Terminal
+                queue={eventQueue}
+                banner={[
+                  textLine({ words: [textWord({ characters: bannerText })] }),
+                ]}
+                onCommand={(command) => {
+                  console.log(command);
+                  command === "play" &&
+                    print([
+                      textLine({
+                        words: [
+                          textWord({
+                            characters: "Let's Play Rock PAper Scisscoors",
+                          }),
+                        ],
+                      }),
+                    ]);
+                  print([
+                    textLine({
+                      words: [
+                        textWord({ characters: "You entered command: " }),
+                        commandWord({ characters: command, prompt: ">" }),
+                      ],
+                    }),
+                  ]);
+                }}
+              />
+            </div>
+          </Box>
           <Flex
             gridArea="b1"
             minHeight="0"
