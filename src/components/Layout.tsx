@@ -36,7 +36,9 @@ const ScreenLayout = ({ children, title = "Flow Sham Bo" }) => {
                 <h3>FLOW SHAM BO</h3>
               </Flex>
             </nav>
-            <Flex flex={1}>{children}</Flex>
+            <Flex id="term-container" flex={1}>
+              {children}
+            </Flex>
             <footer>
               <Newsbar />
             </footer>

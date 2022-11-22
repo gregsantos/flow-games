@@ -2,7 +2,7 @@
 // @ts-nocheck
 import { useEffect, useRef } from "react";
 import { useRouter } from "next/router";
-import { Flex } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 import * as fcl from "@onflow/fcl";
 import { HOME_BANNER as banner, GAME_LIST as gameList } from "../constants";
 
@@ -348,9 +348,9 @@ const HomeTerminal = () => {
   }, []);
 
   return (
-    <Flex id="terminal" ref={terminalRef} fontSize="1.15em">
+    <Box id="terminal" ref={terminalRef} fontSize="1.15em">
       <textarea spellCheck="false" ref={textAreaRef} />
-    </Flex>
+    </Box>
   );
 };
 

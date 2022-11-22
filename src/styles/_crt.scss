@@ -66,6 +66,32 @@
   }
 }
 
+#interlace {
+  @include v.fill();
+
+  z-index: 21;
+  opacity: 0.25;
+  background: v.$interlace-background;
+  background-repeat: repeat-y;
+  background-size: 100% v.$interlace-size;
+}
+
+#scanline {
+  position: absolute;
+  width: 100%;
+  height: 1em;
+  background: linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(255, 255, 255, 0.2) 10%,
+    rgba(0, 0, 0, 0.1) 100%
+  );
+  opacity: 0.25;
+  bottom: 100%;
+  pointer-events: none;
+  animation: scanline 15s linear infinite;
+}
+
 #envelope {
   @include v.fill(
     v.$envelope-margin,
@@ -88,30 +114,9 @@
   z-index: 40;
 }
 
-#interlace {
-  @include v.fill();
-
-  z-index: 1;
-  opacity: 0.15;
-  background: v.$interlace-background;
-  background-size: 100% v.$interlace-size;
-  background-repeat: repeat-y;
-}
-
-#scanline {
-  position: absolute;
-  width: 100%;
-  height: 1em;
-  background: linear-gradient(
-    0deg,
-    rgba(0, 0, 0, 0) 0%,
-    rgba(255, 255, 255, 0.2) 10%,
-    rgba(0, 0, 0, 0.1) 100%
-  );
-  opacity: 0.15;
-  bottom: 100%;
-  pointer-events: none;
-  animation: scanline 15s linear infinite;
+#term-container {
+  animation: skew 4s linear infinite;
+  -webkit-animation: skew 5s linear infinite;
 }
 
 #terminal {

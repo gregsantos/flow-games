@@ -9,7 +9,6 @@ export default function AuthTerminal() {
 
   return (
     <Terminal
-      id="authterm"
       ref={terminal}
       autoFocus
       noDefaults
@@ -29,7 +28,7 @@ export default function AuthTerminal() {
       }}
       inputAreaStyle={{ backgroundColor: "transparent" }}
       promptLabelStyle={{
-        width: "50px",
+        width: "55px",
         textShadow: "1px 1px 8px rgba(10, 255, 10, 0.8)",
         color: "#18ff62",
       }}
