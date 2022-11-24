@@ -17,6 +17,7 @@ export default function LandingTerminal() {
       <Terminal
         queue={eventQueue}
         banner={[textLine({ words: [textWord({ characters: banner })] })]}
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         onCommand={async (command) => {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const res: any = await fcl.authenticate();

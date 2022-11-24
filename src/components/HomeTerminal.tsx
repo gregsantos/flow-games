@@ -46,7 +46,7 @@ const openContact = (key) =>
 const browser = (function () {
   let current = "/";
 
-  let tree = [
+  const tree = [
     {
       location: "/",
       filename: "documents",

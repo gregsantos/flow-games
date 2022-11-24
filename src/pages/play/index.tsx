@@ -9,6 +9,7 @@ import { GAME_LIST as banner } from "../../constants";
 export default function AuthTerminal() {
   const { useCurrentUser } = useHooks();
   const currentUser = useCurrentUser();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { loggedIn } = currentUser || {};
   const router = useRouter();
   const { delay } = useUtils();

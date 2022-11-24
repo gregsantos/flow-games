@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { Flex, Box, Grid, Stat, StatLabel } from "@chakra-ui/react";
@@ -53,6 +54,7 @@ export default function Play() {
         ]);
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initalized]);
 
   return (
