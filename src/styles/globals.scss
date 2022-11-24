@@ -183,7 +183,7 @@ input:checked + .slider:before {
 #react-terminal label {
   // @include terminal-text;
 
-  position: relative;
+  position: absolute;
   margin: 0;
   padding: size(4) size(2);
   display: block;

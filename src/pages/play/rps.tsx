@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/router";
 import { Flex, Box, Grid, Stat, StatLabel } from "@chakra-ui/react";
 import {
   Terminal,
@@ -7,17 +8,53 @@ import {
   textWord,
   commandWord,
 } from "crt-terminal";
+import useUtils from "../../utils";
+import useHooks from "../../hooks";
 import ScreenLayout from "../../components/Layout";
 
-const bannerText = `
-FLOW SHAM BO
-
-LET'S PLAT ROCK PAPER SCISSORS!
+const banner = `
+Let's Play FLOW SHAM BO!
 `;
 
 export default function Play() {
+  const [initalized, setInitialized] = useState(false);
+  const { useCurrentUser } = useHooks();
+  const currentUser = useCurrentUser();
+  const { loggedIn } = currentUser || {};
+  const router = useRouter();
+  const { delay } = useUtils();
   const eventQueue = useEventQueue();
-  const { print } = eventQueue.handlers;
+  const { print, clear, loading } = eventQueue.handlers;
+
+  useEffect(() => {
+    if (!initalized) {
+      print([
+        textLine({
+          words: [
+            textWord({
+              characters: "Initalizing Puppet Account...",
+            }),
+          ],
+        }),
+      ]);
+      loading(true);
+
+      delay(3000).then(() => {
+        loading(false);
+        setInitialized(true);
+        print([
+          textLine({
+            words: [
+              textWord({
+                characters: "Account Initalized",
+              }),
+            ],
+          }),
+        ]);
+      });
+    }
+  }, [initalized]);
+
   return (
     <ScreenLayout title="Rock Paper Scissors">
       <Box flex={1} overflow="auto">
@@ -103,7 +140,7 @@ export default function Play() {
               <Terminal
                 queue={eventQueue}
                 banner={[
-                  textLine({ words: [textWord({ characters: bannerText })] }),
+                  textLine({ words: [textWord({ characters: banner })] }),
                 ]}
                 onCommand={(command) => {
                   console.log(command);
@@ -112,7 +149,7 @@ export default function Play() {
                       textLine({
                         words: [
                           textWord({
-                            characters: "Let's Play Rock PAper Scisscoors",
+                            characters: "Let's Play Rock Paper Scisscoors",
                           }),
                         ],
                       }),

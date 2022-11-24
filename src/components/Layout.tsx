@@ -1,9 +1,15 @@
+import type { ReactNode } from "react";
 import React from "react";
 import Head from "next/head";
 import { Flex } from "@chakra-ui/react";
 import Newsbar from "./Newsbar";
 
-const ScreenLayout = ({ children, title = "Flow Sham Bo" }) => {
+interface Props {
+  children?: ReactNode;
+  title?: string;
+}
+
+const ScreenLayout = ({ children, title = "Flow Sham Bo" }: Props) => {
   return (
     <>
       <Head>
