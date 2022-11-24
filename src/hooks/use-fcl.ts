@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-ignore
 import { useState, useEffect } from "react";
 import * as fcl from "@onflow/fcl";
 import "../flow/config.mjs";

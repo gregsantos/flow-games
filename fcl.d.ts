@@ -57,6 +57,7 @@ declare module "@onflow/fcl" {
   }
 
   export interface Configuration {
+    subscribe: any;
     /**
      * Set a configuration value.
      *
@@ -630,6 +631,7 @@ declare module "@onflow/fcl" {
    * @see {@link https://docs.onflow.org/fcl/reference/api/#currentuserobject}
    */
   export interface CurrentUserObject {
+    [x: string]: any;
     /**
      * The public address of the current user
      */
