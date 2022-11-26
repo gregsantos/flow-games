@@ -1,5 +1,6 @@
 import { useRouter } from "next/router";
 import useUtils from "../utils";
+import { Box } from "@chakra-ui/react";
 
 import { Terminal, useEventQueue, textLine, textWord } from "crt-terminal";
 import { HOME_BANNER as banner, GAME_LIST } from "../constants";
@@ -11,7 +12,7 @@ export default function AuthTerminal() {
   const { print } = eventQueue.handlers;
 
   return (
-    <div id="react-terminal">
+    <Box id="react-terminal">
       <Terminal
         queue={eventQueue}
         banner={[textLine({ words: [textWord({ characters: banner })] })]}
@@ -65,6 +66,6 @@ export default function AuthTerminal() {
           }
         }}
       />
-    </div>
+    </Box>
   );
 }

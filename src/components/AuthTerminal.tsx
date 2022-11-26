@@ -1,6 +1,6 @@
 import * as fcl from "@onflow/fcl";
-
 import { Terminal, useEventQueue, textLine, textWord } from "crt-terminal";
+import { Box } from "@chakra-ui/react";
 
 const banner = `
 ENTER AUTHORIZATION CODE TO CONTINUE:
@@ -10,10 +10,8 @@ export default function LandingTerminal() {
   const eventQueue = useEventQueue();
   const { print, focus } = eventQueue.handlers;
 
-  console.log("Auth");
-
   return (
-    <div id="react-terminal">
+    <Box id="react-terminal">
       <Terminal
         queue={eventQueue}
         banner={[textLine({ words: [textWord({ characters: banner })] })]}
@@ -33,6 +31,6 @@ export default function LandingTerminal() {
           }
         }}
       />
-    </div>
+    </Box>
   );
 }

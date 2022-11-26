@@ -42,7 +42,12 @@ const ScreenLayout = ({ children, title = "Flow Sham Bo" }: Props) => {
                 <h3>FLOW SHAM BO</h3>
               </Flex>
             </nav>
-            <Flex id="term-container" flex={1}>
+            <Flex
+              id="layout-main-container"
+              flex={1}
+              position="relative"
+              border="red solid 2px"
+            >
               {children}
             </Flex>
             <footer>
