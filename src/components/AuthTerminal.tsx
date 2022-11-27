@@ -3,7 +3,8 @@ import { Terminal, useEventQueue, textLine, textWord } from "crt-terminal";
 import { Box } from "@chakra-ui/react";
 
 const banner = `
-ENTER AUTHORIZATION CODE TO CONTINUE:
+AUTHENTICATION REQUIRED.
+ENTER "c" TO CONNECT WALLET AND CONTINUE.
 `;
 
 export default function LandingTerminal() {

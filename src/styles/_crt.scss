@@ -102,8 +102,8 @@
 
   z-index: 40;
   border-radius: v.$base-unit / 2;
-  //  animation: skew 4s linear infinite;
-  //  -webkit-animation: skew 5s linear infinite;
+  /*   animation: skew 4s linear infinite;
+  -webkit-animation: skew 5s linear infinite; */
   background: rgba(0, 0, 0, 0.25);
   border-radius: 0.5em;
   bottom: 2em;
@@ -112,11 +112,6 @@
   right: 2em;
   top: 2em;
   z-index: 40;
-}
-
-#layout-main-container {
-  animation: skew 4s linear infinite;
-  -webkit-animation: skew 5s linear infinite;
 }
 
 #terminal {

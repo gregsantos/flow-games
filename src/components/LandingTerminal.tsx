@@ -5,7 +5,7 @@ import { Box } from "@chakra-ui/react";
 import { Terminal, useEventQueue, textLine, textWord } from "crt-terminal";
 import { HOME_BANNER as banner, GAME_LIST } from "../constants";
 
-export default function AuthTerminal() {
+export default function LandingTerminal() {
   const router = useRouter();
   const { delay } = useUtils();
   const eventQueue = useEventQueue();

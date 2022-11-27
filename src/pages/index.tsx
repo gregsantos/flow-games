@@ -1,12 +1,11 @@
-import { ScreenLayout, AuthTerminal } from "../components/";
-import LandingTerminal from "../components/LandingTerminal";
+import { ScreenLayout, AuthTerminal, LandingTerminal } from "../components/";
 import "../flow/config";
 import useHooks from "../hooks";
 
 export default function Index() {
   const { useCurrentUser } = useHooks();
   const currentUser = useCurrentUser();
-  const { loggedIn } = currentUser || {};
+  const { loggedIn } = currentUser || { loggedIn: null };
 
   return (
     <ScreenLayout title="Welcome to Flow Games">

@@ -1,15 +1,22 @@
 import type { ReactNode } from "react";
 import React from "react";
 import Head from "next/head";
-import { Flex } from "@chakra-ui/react";
+import { Flex, Box } from "@chakra-ui/react";
 import Newsbar from "./Newsbar";
+import useHooks from "../hooks";
 
 interface Props {
   children?: ReactNode;
   title?: string;
 }
 
-const ScreenLayout = ({ children, title = "Flow Sham Bo" }: Props) => {
+export default function ScreenLayout({
+  children,
+  title = "Flow Games",
+}: Props) {
+  const { useCurrentUser } = useHooks();
+  const currentUser = useCurrentUser();
+
   return (
     <>
       <Head>
@@ -34,22 +41,15 @@ const ScreenLayout = ({ children, title = "Flow Sham Bo" }: Props) => {
             <nav>
               <Flex
                 height={["0px", "40px", "50px", "60px"]}
-                direction="column"
+                direction="row"
                 align="center"
-                justify="center"
-                p={2}
+                justify="flex-end"
+                p={6}
               >
-                <h3>FLOW SHAM BO</h3>
+                <Box>{currentUser?.addr}</Box>
               </Flex>
             </nav>
-            <Flex
-              id="layout-main-container"
-              flex={1}
-              position="relative"
-              border="red solid 2px"
-            >
-              {children}
-            </Flex>
+            <Flex flex={1}>{children}</Flex>
             <footer>
               <Newsbar />
             </footer>
@@ -58,6 +58,4 @@ const ScreenLayout = ({ children, title = "Flow Sham Bo" }: Props) => {
       </Flex>
     </>
   );
-};
-
-export default ScreenLayout;
+}
