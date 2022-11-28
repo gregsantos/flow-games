@@ -12,7 +12,7 @@ export default function LandingTerminal() {
   const { print, focus } = eventQueue.handlers;
 
   return (
-    <Box id="react-terminal">
+    <Box className="react-terminal">
       <Terminal
         queue={eventQueue}
         banner={[textLine({ words: [textWord({ characters: banner })] })]}

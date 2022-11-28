@@ -12,12 +12,23 @@ export default function LandingTerminal() {
   const { print } = eventQueue.handlers;
 
   return (
-    <Box id="react-terminal">
+    <Box className="react-terminal">
       <Terminal
         queue={eventQueue}
         banner={[textLine({ words: [textWord({ characters: banner })] })]}
-        onCommand={(command) => {
-          if (command === "lg") {
+        onCommand={(c) => {
+          const command = c.toLowerCase();
+          if (command === "help") {
+            print([
+              textLine({
+                words: [
+                  textWord({
+                    characters: `I would suggest you play Rock Paper Scissors`,
+                  }),
+                ],
+              }),
+            ]);
+          } else if (command === "lg") {
             print([
               textLine({
                 words: [

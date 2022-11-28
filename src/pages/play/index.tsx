@@ -18,7 +18,7 @@ export default function AuthTerminal() {
 
   return (
     <ScreenLayout title="Welcome to Flow Games">
-      <div id="react-terminal">
+      <div className="react-terminal">
         <Terminal
           queue={eventQueue}
           banner={[textLine({ words: [textWord({ characters: banner })] })]}
