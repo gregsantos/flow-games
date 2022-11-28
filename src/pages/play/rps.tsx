@@ -80,8 +80,7 @@ s = scissors
 export default function Play() {
   const [initalized, setInitialized] = useState(false);
   const [lastWinner, setLastWinner] = useState<number | null>(null);
-  const [submittingMove, setSubmittingMove] = useState(false);
-  const [locked, setLocked] = useState(false);
+  const [locked, setLocked] = useState(true);
   const { useCurrentUser } = useHooks();
   const currentUser = useCurrentUser();
   const { loggedIn } = currentUser || { loggedIn: null };
@@ -160,10 +159,12 @@ export default function Play() {
         ],
       }),
     ]);
-    lock(false);
+    toggleLocked();
   };
 
   useEffect(() => {
+    lock(locked);
+    console.log("inital locked", locked);
     if (initalized) {
       initGame();
     } else {
@@ -231,11 +232,11 @@ export default function Play() {
           clearTerm3();
           clearTerm2();
           delay(1000).then(() => {
-            setSubmittingMove(false);
             lock(false);
           });
         });
       });
+      toggleLocked();
     });
   };
 
@@ -283,14 +284,15 @@ export default function Play() {
   };
 
   const toggleLocked = () => {
+    console.log("toggle locked", locked);
     locked ? lock(false) : lock(true);
     setLocked((locked) => !locked);
+    console.log("locked", !locked);
   };
 
   const handleThrow = async (command: string) => {
-    setSubmittingMove(true);
     clear();
-    lock(true);
+    toggleLocked();
 
     await handleMoves(command);
     await handleEndgame(command);
@@ -395,7 +397,7 @@ export default function Play() {
                 }
                 size={["sm", "md", "lg"]}
                 variant="outline"
-                disabled={submittingMove}
+                disabled={locked}
               >
                 Rock
               </Button>
@@ -406,7 +408,7 @@ export default function Play() {
                 }
                 size={["sm", "md", "lg"]}
                 variant="outline"
-                disabled={submittingMove}
+                disabled={locked}
               >
                 Paper
               </Button>
@@ -417,7 +419,7 @@ export default function Play() {
                 }
                 size={["sm", "md", "lg"]}
                 variant="outline"
-                disabled={submittingMove}
+                disabled={locked}
               >
                 Scissors
               </Button>
