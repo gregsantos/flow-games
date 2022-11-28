@@ -222,13 +222,22 @@ export default function Play() {
             ],
           }),
         ]);
-        lock(false);
-        setSubmittingMove(false);
+        delay(2000).then(() => {
+          clearTerm3();
+          clearTerm2();
+          delay(1000).then(() => {
+            setSubmittingMove(false);
+            lock(false);
+          });
+        });
       });
     });
   };
 
   const handleThrow = (command: string) => {
+    /*     delay(2000).then(() => {
+      clearTerm3();
+    }); */
     setSubmittingMove(true);
     clearTerm2();
     lock(true);
@@ -276,6 +285,17 @@ export default function Play() {
       default:
         break;
     }
+    delay(500).then(() => {
+      printTerm3([
+        textLine({
+          words: [
+            textWord({
+              characters: "Player 2 Move",
+            }),
+          ],
+        }),
+      ]);
+    });
     handleEndgame(command);
   };
 
