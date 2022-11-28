@@ -11,76 +11,67 @@ import {
   Button,
   ButtonGroup,
 } from "@chakra-ui/react";
-import {
-  Terminal,
-  useEventQueue,
-  textLine,
-  textWord,
-  commandWord,
-} from "crt-terminal";
+import { Terminal, useEventQueue, textLine, textWord } from "crt-terminal";
 import useUtils from "../../utils";
 import useHooks from "../../hooks";
 import ScreenLayout from "../../components/ScreenLayout";
-import { ROCK_ASCII } from "../../constants";
+import { BANNERS } from "../../constants";
+
+interface GameState {
+  scores: [number, number, number];
+  results: [number, number, number];
+  winner: number;
+}
+
+interface GameResults {
+  p: string;
+  c: string;
+}
+
+interface Scores {
+  p: number;
+  c: number;
+  t: number;
+}
+
+const lookupRPS = ["r", "p", "s"];
+
+const rps = {
+  r: {
+    beats: "s",
+    imgUrl: "imgs/rock.png",
+  },
+  p: {
+    beats: "r",
+    imgUrl: "imgs/paper.png",
+  },
+  s: {
+    beats: "p",
+    imgUrl: "imgs/scissors.png",
+  },
+};
+
+const initialState = { count: 0, scores: [], results: [], winner: null };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const commands: any = {
   r: "rock",
   p: "paper",
   s: "scissors",
-  rock: "rock",
-  paper: "paper",
-  scissors: "scissors",
 };
-const banner = `
-Let's Play FLOW SHAM BO!
-`;
-
-const initBanner = `
-
-Welcome to FLOW SHAM BO!
-Initalizing Account for Gameplay...
-`;
-
-const gameLogo = `
-⠀⠀⠀⠀⠀⣠⡴⠖⠒⠲⠶⢤⣄⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⡴⠖⠒⢶⣄⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⢀⡾⠁⠀⣀⠔⠁⠀⠀⠈⠙⠷⣤⠦⣤⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⡼⠋⠀⠀⠀⢀⡿⠀⠀⠀⠀⠀⠀⠀
-⣠⠞⠛⠛⠛⠋⠉⠀⠀⠀⠀⠀⠀⠀⠀⠘⢧⠈⢿⡀⢠⡶⠒⠳⠶⣄⠀⠀⠀⠀⠀⣴⠟⠁⠀⠀⠀⣰⠏⠀⢀⣤⣤⣄⡀⠀⠀
-⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠟⠛⠛⠃⠸⡇⠈⣇⠸⡇⠀⠀⠀⠘⣇⠀⠀⣠⡾⠁⠀⠀⠀⢀⣾⣣⡴⠚⠉⠀⠀⠈⠹⡆⠀
-⣹⡷⠤⠤⠤⠄⠀⠀⠀⠀⢠⣤⡤⠶⠖⠛⠀⣿⠀⣿⠀⢻⡄⠀⠀⠀⢻⣠⡾⠋⠀⠀⠀⠀⣠⡾⠋⠁⠀⠀⠀⠀⢀⣠⡾⠃⠀
-⡟⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⡤⠖⠋⢀⣿⣠⠏⠀⠀⣿⠀⠀⠀⠘⠉⠀⠀⠀⠀⠀⡰⠋⠀⠀⠀⠀⠀⣠⠶⠋⠁⠀⠀⠀
-⢿⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⡾⠋⠁⠀⠀⠠⡏⠀⠀⠀⠀⠀⠀⠀⠀⠀⠐⠁⠀⠀⠀⢀⣴⡿⠥⠶⠖⠛⠛⢶⡄
-⠀⠉⢿⡋⠉⠉⠁⠀⠀⠀⠀⠀⢀⣠⠾⠋⠀⠀⠀⠀⢀⣰⡇⠀⠀⢀⡄⠀⠀⠀⠀⠀⠀⠀⠀⢀⡴⠋⠀⠀⠀⠀⠀⢀⣠⠼⠃
-⠀⠀⠈⠛⠶⠦⠤⠤⠤⠶⠶⠛⠋⠁⠀⠀⠀⠀⠀⠀⣿⠉⣇⠀⡴⠟⠁⣠⡾⠃⠀⠀⠀⠀⠀⠈⠀⠀⠀⣀⣤⠶⠛⠉⠀⠀⠀
-⠀⠀⠀⠀⢀⣠⣤⣀⣠⣤⠶⠶⠒⠶⠶⣤⣀⠀⠀⠀⢻⡄⠹⣦⠀⠶⠛⢁⣠⡴⠀⠀⠀⠀⠀⠀⣠⡶⠛⠉⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⢀⡴⠋⣠⠞⠋⠁⠀⠀⠀⠀⠙⣄⠀⠙⢷⡀⠀⠀⠻⣄⠈⢷⣄⠈⠉⠁⠀⠀⠀⢀⣠⡴⠟⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⢀⡾⠁⣴⠋⠰⣤⣄⡀⠀⠀⠀⠀⠈⠳⢤⣼⣇⣀⣀⠀⠉⠳⢤⣭⡿⠒⠶⠶⠒⠚⠋⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⢸⠃⢰⠇⠰⢦⣄⡈⠉⠀⠀⠀⠀⠀⠀⠀⠀⠈⠉⠉⠉⠛⠛⠓⠲⢦⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠸⣧⣿⠀⠻⣤⡈⠛⠳⠆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢻⡆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠈⠹⣆⠀⠈⠛⠂⠀⠀⠀⠀⠀⠀⠈⠐⠒⠒⠶⣶⣶⠶⠤⠤⣤⣠⡼⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠹⣦⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⠳⢦⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠈⠻⣦⣀⠀⠀⠀⠀⠐⠲⠤⣤⣀⡀⠀⠀⠀⠀⠀⠉⢳⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠉⠛⠶⠤⠤⠤⠶⠞⠋⠉⠙⠳⢦⣄⡀⠀⠀⠀⡷⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠙⠳⠦⠾⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-
-`;
-
-const welcomeBanner = `
-You have entered the game!
-Awaiting Player 2
-`;
-
-const submitBanner = `
-Submit your move!
-r = rock
-p = paper
-s = scissors
-`;
 
 export default function Play() {
   const [initalized, setInitialized] = useState(false);
   const [lastWinner, setLastWinner] = useState<number | null>(null);
   const [locked, setLocked] = useState(true);
+  // const { gameState, setGameState } = useState<GameState>({} as GameState);
+  // const [state, dispatch] = useReducer(reducer, initialState);
+  const [scores, setScores] = useState<Scores>({
+    p: 0,
+    c: 0,
+    t: 0,
+  });
+  const [results, setResults] = useState<GameResults>({} as GameResults);
   const { useCurrentUser } = useHooks();
   const currentUser = useCurrentUser();
   const { loggedIn } = currentUser || { loggedIn: null };
@@ -104,12 +95,32 @@ export default function Play() {
     lock: lockTerm3,
   } = eventQueue3.handlers;
 
+  function getWinner() {
+    return results.p === results.c
+      ? "t"
+      : rps[results.p].beats === results.c
+      ? "p"
+      : "c";
+  }
+
+  function calculateWinner() {
+    function getRandomIdx() {
+      return Math.floor(Math.random() * 3);
+    }
+    const p = lookupRPS[getRandomIdx()];
+    const c = lookupRPS[getRandomIdx()];
+    setResults({ p, c });
+    const winner = getWinner();
+    setScores((scores) => scores);
+    scores[winner]++;
+  }
+
   const initAccount = async () => {
     print([
       textLine({
         words: [
           textWord({
-            characters: initBanner,
+            characters: BANNERS.INIT,
           }),
         ],
       }),
@@ -118,7 +129,7 @@ export default function Play() {
       textLine({
         words: [
           textWord({
-            characters: gameLogo,
+            characters: BANNERS.GAME_LOGO,
           }),
         ],
       }),
@@ -128,18 +139,20 @@ export default function Play() {
   };
 
   const initGame = async () => {
+    console.log("init game");
+
     print([
       textLine({
         words: [
           textWord({
-            characters: welcomeBanner,
+            characters: BANNERS.WELCOME,
           }),
         ],
       }),
     ]);
-    await delay(1000);
+    await delay(1500);
     loading(true);
-    await delay(2000);
+    await delay(1500);
     loading(false);
     print([
       textLine({
@@ -154,7 +167,7 @@ export default function Play() {
       textLine({
         words: [
           textWord({
-            characters: submitBanner,
+            characters: BANNERS.SUBMIT,
           }),
         ],
       }),
@@ -163,8 +176,9 @@ export default function Play() {
   };
 
   useEffect(() => {
+    console.log("initialized", initalized, "locked", locked);
+
     lock(locked);
-    console.log("inital locked", locked);
     if (initalized) {
       initGame();
     } else {
@@ -174,17 +188,6 @@ export default function Play() {
   }, [initalized]);
 
   const handleEndgame = async (command: string) => {
-    delay(500).then(() => {
-      printTerm3([
-        textLine({
-          words: [
-            textWord({
-              characters: "Player 2 Move",
-            }),
-          ],
-        }),
-      ]);
-    });
     // get P2's move and determine winner
     // print winner
     // print play again?
@@ -241,46 +244,28 @@ export default function Play() {
   };
 
   const handleMoves = async (command: string) => {
-    switch (command) {
-      case "r":
-      case "rock":
-        printTerm2([
-          textLine({
-            words: [
-              textWord({
-                characters: ROCK_ASCII,
-              }),
-            ],
+    printTerm2([
+      textLine({
+        words: [
+          textWord({
+            characters: BANNERS.PAPER_ASCII,
           }),
-        ]);
-        break;
-      case "p":
-      case "paper":
-        printTerm2([
-          textLine({
-            words: [
-              textWord({
-                characters: "PAPER",
-              }),
-            ],
+        ],
+      }),
+    ]);
+    // get player 2's move and winner
+    await delay(2000);
+    printTerm3([
+      textLine({
+        words: [
+          textWord({
+            characters: BANNERS.ROCK_ASCII,
           }),
-        ]);
-        break;
-      case "s":
-      case "scissors":
-        printTerm2([
-          textLine({
-            words: [
-              textWord({
-                characters: "SCISSORS",
-              }),
-            ],
-          }),
-        ]);
-        break;
-      default:
-        break;
-    }
+        ],
+      }),
+    ]);
+    await delay(2000);
+    return 0;
   };
 
   const toggleLocked = () => {
@@ -294,7 +279,9 @@ export default function Play() {
     clear();
     toggleLocked();
 
-    await handleMoves(command);
+    const winner = await handleMoves(command);
+    console.log("winner is", winner);
+
     await handleEndgame(command);
   };
 
@@ -391,7 +378,7 @@ export default function Play() {
           >
             <ButtonGroup gap="8">
               <Button
-                value="rock"
+                value="r"
                 onClick={(e) =>
                   handleThrow((e.target as HTMLTextAreaElement).value)
                 }
@@ -402,7 +389,7 @@ export default function Play() {
                 Rock
               </Button>
               <Button
-                value="paper"
+                value="p"
                 onClick={(e) =>
                   handleThrow((e.target as HTMLTextAreaElement).value)
                 }
@@ -413,7 +400,7 @@ export default function Play() {
                 Paper
               </Button>
               <Button
-                value="scissors"
+                value="s"
                 onClick={(e) =>
                   handleThrow((e.target as HTMLTextAreaElement).value)
                 }
@@ -437,11 +424,8 @@ export default function Play() {
                 effects={{ scanner: false }}
                 printer={{ printerSpeed: 20, charactersPerTick: 5 }}
                 onCommand={(command1) => {
-                  clear();
                   const c = command1.toLowerCase();
-                  if (
-                    ["r", "p", "s", "rock", "paper", "scissors"].includes(c)
-                  ) {
+                  if (["r", "p", "s"].includes(c)) {
                     handleThrow(c);
                   } else {
                     print([

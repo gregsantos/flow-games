@@ -3,7 +3,7 @@ import useUtils from "../utils";
 import { Box } from "@chakra-ui/react";
 
 import { Terminal, useEventQueue, textLine, textWord } from "crt-terminal";
-import { HOME_BANNER as banner, GAME_LIST } from "../constants";
+import { BANNERS } from "../constants";
 
 export default function LandingTerminal() {
   const router = useRouter();
@@ -15,7 +15,7 @@ export default function LandingTerminal() {
     <Box className="react-terminal">
       <Terminal
         queue={eventQueue}
-        banner={[textLine({ words: [textWord({ characters: banner })] })]}
+        banner={[textLine({ words: [textWord({ characters: BANNERS.HOME })] })]}
         printer={{ printerSpeed: 20, charactersPerTick: 15 }}
         onCommand={(c) => {
           const command = c.toLowerCase();
@@ -34,7 +34,7 @@ export default function LandingTerminal() {
               textLine({
                 words: [
                   textWord({
-                    characters: GAME_LIST,
+                    characters: BANNERS.GAME_LIST,
                   }),
                 ],
               }),
