@@ -16,6 +16,7 @@ export default function LandingTerminal() {
       <Terminal
         queue={eventQueue}
         banner={[textLine({ words: [textWord({ characters: banner })] })]}
+        printer={{ printerSpeed: 20, charactersPerTick: 15 }}
         onCommand={(c) => {
           const command = c.toLowerCase();
           if (command === "help") {

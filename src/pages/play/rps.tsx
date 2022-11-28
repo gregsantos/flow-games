@@ -21,6 +21,7 @@ import {
 import useUtils from "../../utils";
 import useHooks from "../../hooks";
 import ScreenLayout from "../../components/ScreenLayout";
+import { ROCK_ASCII } from "../../constants";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const commands: any = {
@@ -35,7 +36,7 @@ const banner = `
 Let's Play FLOW SHAM BO!
 `;
 
-const gameBanner = `
+const initBanner = `
 
 Welcome to FLOW SHAM BO!
 Initalizing Account for Gameplay...
@@ -80,16 +81,17 @@ export default function Play() {
   const [initalized, setInitialized] = useState(false);
   const [lastWinner, setLastWinner] = useState<number | null>(null);
   const [submittingMove, setSubmittingMove] = useState(false);
+  const [locked, setLocked] = useState(false);
   const { useCurrentUser } = useHooks();
   const currentUser = useCurrentUser();
   const { loggedIn } = currentUser || { loggedIn: null };
   const router = useRouter();
   const { delay } = useUtils();
-  const eventQueue1 = useEventQueue();
+  const eventQueue = useEventQueue();
   const eventQueue2 = useEventQueue();
   const eventQueue3 = useEventQueue();
 
-  const { print, clear, loading, lock, focus } = eventQueue1.handlers;
+  const { print, clear, loading, lock, focus } = eventQueue.handlers;
   const {
     print: printTerm2,
     clear: clearTerm2,
@@ -103,82 +105,85 @@ export default function Play() {
     lock: lockTerm3,
   } = eventQueue3.handlers;
 
+  const initAccount = async () => {
+    print([
+      textLine({
+        words: [
+          textWord({
+            characters: initBanner,
+          }),
+        ],
+      }),
+    ]);
+    print([
+      textLine({
+        words: [
+          textWord({
+            characters: gameLogo,
+          }),
+        ],
+      }),
+    ]);
+    await delay(5000);
+    setInitialized(true);
+  };
+
+  const initGame = async () => {
+    print([
+      textLine({
+        words: [
+          textWord({
+            characters: welcomeBanner,
+          }),
+        ],
+      }),
+    ]);
+    await delay(1000);
+    loading(true);
+    await delay(2000);
+    loading(false);
+    print([
+      textLine({
+        words: [
+          textWord({
+            characters: `Player 2 has joined the game!`,
+          }),
+        ],
+      }),
+    ]);
+    print([
+      textLine({
+        words: [
+          textWord({
+            characters: submitBanner,
+          }),
+        ],
+      }),
+    ]);
+    lock(false);
+  };
+
   useEffect(() => {
     if (initalized) {
-      print([
-        textLine({
-          words: [
-            textWord({
-              characters: welcomeBanner,
-            }),
-          ],
-        }),
-      ]);
-      loading(true);
-      delay(2500).then(() => {
-        loading(false);
-        clear();
-        print([
-          textLine({
-            words: [
-              textWord({
-                characters: `Player 2 has joined the game!`,
-              }),
-            ],
-          }),
-        ]);
-        print([
-          textLine({
-            words: [
-              textWord({
-                characters: submitBanner,
-              }),
-            ],
-          }),
-        ]);
-        lock(false);
-      });
+      initGame();
     } else {
-      print([
-        textLine({
-          words: [
-            textWord({
-              characters: gameBanner,
-            }),
-          ],
-        }),
-      ]);
-      delay(2500).then(() => {
-        print([
-          textLine({
-            words: [
-              textWord({
-                characters: gameLogo,
-              }),
-            ],
-          }),
-        ]);
-      });
-      delay(7500).then(() => {
-        print([
-          textLine({
-            words: [
-              textWord({
-                characters: "Account Initalized!",
-              }),
-            ],
-          }),
-        ]);
-        delay(1500).then(() => {
-          clear();
-          setInitialized(true);
-        });
-      });
+      initAccount();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initalized]);
 
-  const handleEndgame = (command: string) => {
+  const handleEndgame = async (command: string) => {
+    delay(500).then(() => {
+      printTerm3([
+        textLine({
+          words: [
+            textWord({
+              characters: "Player 2 Move",
+            }),
+          ],
+        }),
+      ]);
+    });
     // get P2's move and determine winner
     // print winner
     // print play again?
@@ -234,14 +239,7 @@ export default function Play() {
     });
   };
 
-  const handleThrow = (command: string) => {
-    /*     delay(2000).then(() => {
-      clearTerm3();
-    }); */
-    setSubmittingMove(true);
-    clearTerm2();
-    lock(true);
-
+  const handleMoves = async (command: string) => {
     switch (command) {
       case "r":
       case "rock":
@@ -249,12 +247,11 @@ export default function Play() {
           textLine({
             words: [
               textWord({
-                characters: "ROCK",
+                characters: ROCK_ASCII,
               }),
             ],
           }),
         ]);
-        clear();
         break;
       case "p":
       case "paper":
@@ -267,7 +264,6 @@ export default function Play() {
             ],
           }),
         ]);
-        clear();
         break;
       case "s":
       case "scissors":
@@ -280,23 +276,24 @@ export default function Play() {
             ],
           }),
         ]);
-        clear();
         break;
       default:
         break;
     }
-    delay(500).then(() => {
-      printTerm3([
-        textLine({
-          words: [
-            textWord({
-              characters: "Player 2 Move",
-            }),
-          ],
-        }),
-      ]);
-    });
-    handleEndgame(command);
+  };
+
+  const toggleLocked = () => {
+    locked ? lock(false) : lock(true);
+    setLocked((locked) => !locked);
+  };
+
+  const handleThrow = async (command: string) => {
+    setSubmittingMove(true);
+    clear();
+    lock(true);
+
+    await handleMoves(command);
+    await handleEndgame(command);
   };
 
   return (
@@ -434,8 +431,9 @@ export default function Play() {
           >
             <div className="react-terminal">
               <Terminal
-                queue={eventQueue1}
+                queue={eventQueue}
                 effects={{ scanner: false }}
+                printer={{ printerSpeed: 20, charactersPerTick: 5 }}
                 onCommand={(command1) => {
                   clear();
                   const c = command1.toLowerCase();
@@ -477,8 +475,9 @@ export default function Play() {
                   prompt={""}
                   cursorSymbol=""
                   effects={{ scanner: false }}
+                  printer={{ printerSpeed: 10, charactersPerTick: 5 }}
                   focusOnMount={false}
-                  onCommand={(c2) => clearTerm2()}
+                  onCommand={() => {}}
                 />
               </div>
             </Flex>
@@ -501,9 +500,10 @@ export default function Play() {
                   queue={eventQueue3}
                   prompt=""
                   cursorSymbol=""
+                  printer={{ printerSpeed: 10, charactersPerTick: 5 }}
                   effects={{ scanner: false }}
                   focusOnMount={false}
-                  onCommand={(c3) => {}}
+                  onCommand={() => {}}
                 />
               </div>
             </Flex>

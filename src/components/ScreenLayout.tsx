@@ -50,9 +50,7 @@ export default function ScreenLayout({
               </Flex>
             </nav>
             <Flex flex={1}>{children}</Flex>
-            <footer>
-              <Newsbar />
-            </footer>
+            <footer>{/*<Newsbar />*/}</footer>
           </Flex>
         </Flex>
       </Flex>
