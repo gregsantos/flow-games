@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
@@ -21,14 +22,26 @@ import useUtils from "../../utils";
 import useHooks from "../../hooks";
 import ScreenLayout from "../../components/ScreenLayout";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const commands: any = {
+  r: "rock",
+  p: "paper",
+  s: "scissors",
+  rock: "rock",
+  paper: "paper",
+  scissors: "scissors",
+};
 const banner = `
 Let's Play FLOW SHAM BO!
 `;
 
 const gameBanner = `
+
 Welcome to FLOW SHAM BO!
 Initalizing Account for Gameplay...
+`;
 
+const gameLogo = `
 ⠀⠀⠀⠀⠀⣠⡴⠖⠒⠲⠶⢤⣄⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⡴⠖⠒⢶⣄⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⢀⡾⠁⠀⣀⠔⠁⠀⠀⠈⠙⠷⣤⠦⣤⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⡼⠋⠀⠀⠀⢀⡿⠀⠀⠀⠀⠀⠀⠀
 ⣠⠞⠛⠛⠛⠋⠉⠀⠀⠀⠀⠀⠀⠀⠀⠘⢧⠈⢿⡀⢠⡶⠒⠳⠶⣄⠀⠀⠀⠀⠀⣴⠟⠁⠀⠀⠀⣰⠏⠀⢀⣤⣤⣄⡀⠀⠀
@@ -52,7 +65,7 @@ Initalizing Account for Gameplay...
 `;
 
 const welcomeBanner = `
-Welcome to the game!
+You have entered the game!
 Awaiting Player 2
 `;
 
@@ -65,25 +78,29 @@ s = scissors
 
 export default function Play() {
   const [initalized, setInitialized] = useState(false);
+  const [lastWinner, setLastWinner] = useState<number | null>(null);
+  const [submittingMove, setSubmittingMove] = useState(false);
   const { useCurrentUser } = useHooks();
   const currentUser = useCurrentUser();
-  const { loggedIn } = currentUser || {};
+  const { loggedIn } = currentUser || { loggedIn: null };
   const router = useRouter();
   const { delay } = useUtils();
-  const eventQueue = useEventQueue();
+  const eventQueue1 = useEventQueue();
   const eventQueue2 = useEventQueue();
   const eventQueue3 = useEventQueue();
 
-  const { print, clear, loading } = eventQueue.handlers;
+  const { print, clear, loading, lock, focus } = eventQueue1.handlers;
   const {
-    print: print2,
-    clear: clear2,
-    loading: loading2,
+    print: printTerm2,
+    clear: clearTerm2,
+    loading: loadingTerm2,
+    lock: lockTerm2,
   } = eventQueue2.handlers;
   const {
-    print: print3,
-    clear: clear3,
-    loading: loading3,
+    print: printTerm3,
+    clear: clearTerm3,
+    loading: loadingTerm3,
+    lock: lockTerm3,
   } = eventQueue3.handlers;
 
   useEffect(() => {
@@ -119,6 +136,7 @@ export default function Play() {
             ],
           }),
         ]);
+        lock(false);
       });
     } else {
       print([
@@ -130,6 +148,17 @@ export default function Play() {
           ],
         }),
       ]);
+      delay(2500).then(() => {
+        print([
+          textLine({
+            words: [
+              textWord({
+                characters: gameLogo,
+              }),
+            ],
+          }),
+        ]);
+      });
       delay(7500).then(() => {
         print([
           textLine({
@@ -149,12 +178,105 @@ export default function Play() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initalized]);
 
-  const getBanner = () => {
-    if (!initalized) {
-      return "Initalizing Account for Gameplay";
-    } else {
-      return gameBanner;
+  const handleEndgame = (command: string) => {
+    // get P2's move and determine winner
+    // print winner
+    // print play again?
+    function randomIntFromInterval(min: number, max: number) {
+      // min and max included
+      return Math.floor(Math.random() * (max - min + 1) + min);
     }
+    const winner = randomIntFromInterval(0, 1);
+    setLastWinner(winner);
+    delay(1000).then(() => {
+      clear();
+      lock(true);
+      if (winner === 0) {
+        print([
+          textLine({
+            words: [
+              textWord({
+                characters: `You Played ${commands[command]} and Won!`,
+              }),
+            ],
+          }),
+        ]);
+      } else {
+        print([
+          textLine({
+            words: [
+              textWord({
+                characters: `You Played ${commands[command]} and Lost!`,
+              }),
+            ],
+          }),
+        ]);
+      }
+      delay(1500).then(() => {
+        print([
+          textLine({
+            words: [
+              textWord({
+                characters: `Shall we play again?`,
+              }),
+            ],
+          }),
+        ]);
+        lock(false);
+        setSubmittingMove(false);
+      });
+    });
+  };
+
+  const handleThrow = (command: string) => {
+    setSubmittingMove(true);
+    clearTerm2();
+    lock(true);
+
+    switch (command) {
+      case "r":
+      case "rock":
+        printTerm2([
+          textLine({
+            words: [
+              textWord({
+                characters: "ROCK",
+              }),
+            ],
+          }),
+        ]);
+        clear();
+        break;
+      case "p":
+      case "paper":
+        printTerm2([
+          textLine({
+            words: [
+              textWord({
+                characters: "PAPER",
+              }),
+            ],
+          }),
+        ]);
+        clear();
+        break;
+      case "s":
+      case "scissors":
+        printTerm2([
+          textLine({
+            words: [
+              textWord({
+                characters: "SCISSORS",
+              }),
+            ],
+          }),
+        ]);
+        clear();
+        break;
+      default:
+        break;
+    }
+    handleEndgame(command);
   };
 
   return (
@@ -233,7 +355,7 @@ export default function Play() {
               p={[1, 1, 2]}
               color="green.300"
             >
-              <Button size="lg" variant="outline">
+              <Button size={["sm", "md", "lg"]} variant="outline">
                 Main Menu
               </Button>
             </Flex>
@@ -249,13 +371,37 @@ export default function Play() {
             overflow="auto"
           >
             <ButtonGroup gap="8">
-              <Button size="lg" variant="outline">
+              <Button
+                value="rock"
+                onClick={(e) =>
+                  handleThrow((e.target as HTMLTextAreaElement).value)
+                }
+                size={["sm", "md", "lg"]}
+                variant="outline"
+                disabled={submittingMove}
+              >
                 Rock
               </Button>
-              <Button size="lg" variant="outline">
+              <Button
+                value="paper"
+                onClick={(e) =>
+                  handleThrow((e.target as HTMLTextAreaElement).value)
+                }
+                size={["sm", "md", "lg"]}
+                variant="outline"
+                disabled={submittingMove}
+              >
                 Paper
               </Button>
-              <Button size="lg" variant="outline">
+              <Button
+                value="scissors"
+                onClick={(e) =>
+                  handleThrow((e.target as HTMLTextAreaElement).value)
+                }
+                size={["sm", "md", "lg"]}
+                variant="outline"
+                disabled={submittingMove}
+              >
                 Scissors
               </Button>
             </ButtonGroup>
@@ -266,29 +412,28 @@ export default function Play() {
             borderColor="green.300"
             position="relative"
           >
-            <div id="react-terminal">
+            <div className="react-terminal">
               <Terminal
-                queue={eventQueue}
+                queue={eventQueue1}
                 effects={{ scanner: false }}
-                onCommand={(command) => {
-                  command === "play" &&
+                onCommand={(command1) => {
+                  clear();
+                  const c = command1.toLowerCase();
+                  if (
+                    ["r", "p", "s", "rock", "paper", "scissors"].includes(c)
+                  ) {
+                    handleThrow(c);
+                  } else {
                     print([
                       textLine({
                         words: [
                           textWord({
-                            characters: "Let's Play Rock Paper Scisscoors",
+                            characters: `Invalid command: ${command1}`,
                           }),
                         ],
                       }),
                     ]);
-                  print([
-                    textLine({
-                      words: [
-                        textWord({ characters: "You entered command: " }),
-                        commandWord({ characters: command, prompt: ">" }),
-                      ],
-                    }),
-                  ]);
+                  }
                 }}
               />
             </div>
@@ -306,15 +451,14 @@ export default function Play() {
             overflow="auto"
           >
             <Flex flex={1} position="relative">
-              <div id="react-terminal">
+              <div className="react-terminal">
                 <Terminal
                   queue={eventQueue2}
-                  prompt=""
+                  prompt={""}
                   cursorSymbol=""
                   effects={{ scanner: false }}
-                  onCommand={(command) => {
-                    console.log("command", command);
-                  }}
+                  focusOnMount={false}
+                  onCommand={(c2) => clearTerm2()}
                 />
               </div>
             </Flex>
@@ -332,15 +476,14 @@ export default function Play() {
             overflow="auto"
           >
             <Flex flex={1} position="relative">
-              <div id="react-terminal">
+              <div className="react-terminal">
                 <Terminal
                   queue={eventQueue3}
                   prompt=""
                   cursorSymbol=""
                   effects={{ scanner: false }}
-                  onCommand={(command) => {
-                    console.log("command", command);
-                  }}
+                  focusOnMount={false}
+                  onCommand={(c3) => {}}
                 />
               </div>
             </Flex>
