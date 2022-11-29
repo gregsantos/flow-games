@@ -290,7 +290,14 @@ export default function Play() {
     });
   };
 
-  const handleMoves = async (command: string) => {
+  const toggleLocked = () => {
+    console.log("toggle locked", locked);
+
+    locked ? lock(false) : lock(true);
+    setLocked((locked) => !locked);
+  };
+
+  const printP1Move = async (command: string) => {
     printTerm2([
       textLine({
         words: [
@@ -300,8 +307,9 @@ export default function Play() {
         ],
       }),
     ]);
-    // get player 2's move and winner
-    await delay(2000);
+  };
+
+  const printP2Move = async (command: string) => {
     printTerm3([
       textLine({
         words: [
@@ -311,24 +319,15 @@ export default function Play() {
         ],
       }),
     ]);
-    await delay(2000);
-    return 0;
-  };
-
-  const toggleLocked = () => {
-    console.log("toggle locked", locked);
-
-    locked ? lock(false) : lock(true);
-    setLocked((locked) => !locked);
   };
 
   const handleThrow = async (command: string) => {
     clear();
     toggleLocked();
-
-    const winner = await handleMoves(command);
-    console.log("winner is", winner);
-
+    await printP1Move(command);
+    await delay(2000);
+    await printP2Move(command);
+    await delay(2000);
     await handleEndgame(command);
   };
 
