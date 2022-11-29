@@ -47,7 +47,7 @@ export default function AuthTerminal() {
                     words: [
                       textWord({
                         characters:
-                          "How about a nice game of Rock Paper Scissors?",
+                          "Wouldn't you prefer a good game of Rock Paper Scissors?",
                       }),
                     ],
                   }),

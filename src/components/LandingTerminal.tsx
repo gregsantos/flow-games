@@ -59,7 +59,7 @@ export default function LandingTerminal() {
                 textLine({
                   words: [
                     textWord({
-                      characters: `How about a nice game of Rock Paper Scissors?`,
+                      characters: `Wouldn't you prefer a good game of Rock Paper Scissors?`,
                     }),
                   ],
                 }),

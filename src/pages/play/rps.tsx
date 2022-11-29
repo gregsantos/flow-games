@@ -206,7 +206,8 @@ export default function Play() {
         ],
       }),
     ]);
-    toggleLocked();
+    lock(false);
+    toggleDisableButtons();
   };
 
   const checkAccountInitialized = async () => {
@@ -244,7 +245,46 @@ export default function Play() {
     }
     const winner = randomIntFromInterval(0, 1);
     setLastWinner(winner);
-    delay(1000).then(() => {
+    //clear();
+    if (winner === 0) {
+      print([
+        textLine({
+          words: [
+            textWord({
+              characters: `You Played ${commands[command]} and Won!`,
+            }),
+          ],
+        }),
+      ]);
+    } else {
+      print([
+        textLine({
+          words: [
+            textWord({
+              characters: `You Played ${commands[command]} and Lost!`,
+            }),
+          ],
+        }),
+      ]);
+    }
+    print([
+      textLine({
+        words: [
+          textWord({
+            characters: `Shall we play again?`,
+          }),
+        ],
+      }),
+    ]);
+    delay(2000).then(() => {
+      clearTerm3();
+      clearTerm2();
+      delay(1000).then(() => {
+        lock(false);
+        toggleDisableButtons();
+      });
+    });
+    /*     delay(1000).then(() => {
       clear();
       lock(true);
       if (winner === 0) {
@@ -286,14 +326,11 @@ export default function Play() {
           });
         });
       });
-      toggleLocked();
-    });
+      toggleDisableButtons();
+    }); */
   };
 
-  const toggleLocked = () => {
-    console.log("toggle locked", locked);
-
-    locked ? lock(false) : lock(true);
+  const toggleDisableButtons = () => {
     setLocked((locked) => !locked);
   };
 
@@ -323,7 +360,8 @@ export default function Play() {
 
   const handleThrow = async (command: string) => {
     clear();
-    toggleLocked();
+    lock(true);
+    toggleDisableButtons();
     await printP1Move(command);
     await delay(2000);
     await printP2Move(command);
@@ -474,6 +512,7 @@ export default function Play() {
                   if (["r", "p", "s"].includes(c)) {
                     handleThrow(c);
                     clear();
+                    lock(true);
                   } else {
                     print([
                       textLine({

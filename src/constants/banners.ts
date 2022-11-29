@@ -57,8 +57,6 @@ s = scissors
 `;
 
 export const HOME = `
-GREETINGS.
-
 -------------------------------------------------------------
 ********     **             *******       **       **
 /**/////     /**            **/////**     /**      /**
@@ -86,6 +84,7 @@ Games refers to models, simulations and games having tactical
 and strategic applications.
 -------------------------------------------------------------
 
+GREETINGS.
 SHALL WE PLAY A GAME?
 type 'lg' to list games or 'help' for help
 `;
