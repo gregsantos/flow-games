@@ -45,8 +45,7 @@ export const GAME_LOGO = `
 `;
 
 export const WELCOME = `
-You have entered the game!
-Awaiting Player 2
+Initializing game and awaiting Opponent!
 `;
 
 export const SUBMIT = `

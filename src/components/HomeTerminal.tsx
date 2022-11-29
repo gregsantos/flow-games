@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-nocheck
 import { useEffect, useRef } from "react";
@@ -345,6 +347,7 @@ const HomeTerminal = () => {
         },
       },
     });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

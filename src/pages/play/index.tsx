@@ -4,7 +4,7 @@ import { Terminal, useEventQueue, textLine, textWord } from "crt-terminal";
 import useUtils from "../../utils";
 import useHooks from "../../hooks";
 
-import { GAME_LIST as banner } from "../../constants";
+import { BANNERS } from "../../constants";
 
 export default function AuthTerminal() {
   const { useCurrentUser } = useHooks();
@@ -21,7 +21,9 @@ export default function AuthTerminal() {
       <div className="react-terminal">
         <Terminal
           queue={eventQueue}
-          banner={[textLine({ words: [textWord({ characters: banner })] })]}
+          banner={[
+            textLine({ words: [textWord({ characters: BANNERS.GAME_LIST })] }),
+          ]}
           onCommand={(command) => {
             switch (command) {
               case "9":

@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable @typescript-eslint/no-unused-vars */
+
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import {
@@ -24,8 +25,8 @@ interface GameState {
 }
 
 interface GameResults {
-  p: string;
-  c: string;
+  p: string | undefined;
+  c: string | undefined;
 }
 
 interface Scores {
@@ -34,9 +35,20 @@ interface Scores {
   t: number;
 }
 
+interface ThrowValue {
+  beats: string;
+  imgUrl: string;
+}
+
+interface Throws {
+  r: ThrowValue;
+  p: ThrowValue;
+  s: ThrowValue;
+}
+
 const lookupRPS = ["r", "p", "s"];
 
-const rps = {
+const rps: Throws = {
   r: {
     beats: "s",
     imgUrl: "imgs/rock.png",
@@ -98,7 +110,7 @@ export default function Play() {
   function getWinner() {
     return results.p === results.c
       ? "t"
-      : rps[results.p].beats === results.c
+      : rps[results.p as keyof Throws].beats === results.c
       ? "p"
       : "c";
   }
@@ -116,31 +128,54 @@ export default function Play() {
   }
 
   const initAccount = async () => {
-    print([
-      textLine({
-        words: [
-          textWord({
-            characters: BANNERS.INIT,
+    try {
+      print([
+        textLine({
+          words: [
+            textWord({
+              characters: BANNERS.INIT,
+            }),
+          ],
+        }),
+      ]);
+      print([
+        textLine({
+          words: [
+            textWord({
+              characters: BANNERS.GAME_LOGO,
+            }),
+          ],
+        }),
+      ]);
+      // initialize Users Flow account
+      const accountInitalized = await delay(5000).then(() => true);
+      if (accountInitalized) {
+        console.log("Account Successfully Initalized");
+        print([
+          textLine({
+            words: [
+              textWord({
+                characters: "Account Successfully Initalized",
+              }),
+            ],
           }),
-        ],
-      }),
-    ]);
-    print([
-      textLine({
-        words: [
-          textWord({
-            characters: BANNERS.GAME_LOGO,
-          }),
-        ],
-      }),
-    ]);
-    await delay(5000);
-    setInitialized(true);
+        ]);
+        joinOrCreateGame();
+      }
+    } catch (error) {
+      console.log("Error Initializing Account", error);
+    }
   };
 
   const initGame = async () => {
-    console.log("init game");
+    loading(true);
+    await delay(1500).then(() => {
+      console.log("client successfully initialized new game");
+      return true;
+    });
+  };
 
+  const joinOrCreateGame = async () => {
     print([
       textLine({
         words: [
@@ -150,10 +185,9 @@ export default function Play() {
         ],
       }),
     ]);
-    await delay(1500);
-    loading(true);
-    await delay(1500);
+    await initGame();
     loading(false);
+    await delay(1500);
     print([
       textLine({
         words: [
@@ -175,17 +209,30 @@ export default function Play() {
     toggleLocked();
   };
 
+  const checkAccountInitialized = async () => {
+    try {
+      return await delay(1000).then(() => false);
+    } catch (error) {
+      console.log("Error Checking Account Initialized", error);
+    }
+  };
+
   useEffect(() => {
     console.log("initialized", initalized, "locked", locked);
-
     lock(locked);
-    if (initalized) {
-      initGame();
-    } else {
-      initAccount();
-    }
+    const initializeGame = async () => {
+      const initalized = await checkAccountInitialized();
+
+      if (!initalized) {
+        await initAccount();
+      } else {
+        joinOrCreateGame();
+      }
+    };
+
+    initializeGame();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [initalized]);
+  }, []);
 
   const handleEndgame = async (command: string) => {
     // get P2's move and determine winner
@@ -270,9 +317,9 @@ export default function Play() {
 
   const toggleLocked = () => {
     console.log("toggle locked", locked);
+
     locked ? lock(false) : lock(true);
     setLocked((locked) => !locked);
-    console.log("locked", !locked);
   };
 
   const handleThrow = async (command: string) => {
@@ -427,6 +474,7 @@ export default function Play() {
                   const c = command1.toLowerCase();
                   if (["r", "p", "s"].includes(c)) {
                     handleThrow(c);
+                    clear();
                   } else {
                     print([
                       textLine({
