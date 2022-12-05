@@ -1,4 +1,53 @@
 {
+  "contracts": {
+    "FungibleToken": {
+      "source": "./src/flow/cadence/contracts/utility/FungibleToken.cdc",
+      "aliases": {
+        "emulator": "0xee82856bf20e2aa6"
+      }
+    },
+    "FlowToken": {
+      "aliases": {
+        "emulator": "0x0ae53cb6e3f42a79"
+      }
+    },
+    "GamePieceNFT": {
+      "source": "./src/flow/cadence/contracts/GamePieceNFT.cdc",
+      "aliases": {
+        "emulator": "0xf8d6e0586b0a20c7"
+      }
+    },
+    "DynamicNFT": {
+      "source": "./src/flow/cadence/contracts/DynamicNFT.cdc",
+      "aliases": {
+        "emulator": "0xf8d6e0586b0a20c7"
+      }
+    },
+    "GamingMetadataViews": {
+      "source": "./src/flow/cadence/contracts/GamingMetadataViews.cdc",
+      "aliases": {
+        "emulator": "0xf8d6e0586b0a20c7"
+      }
+    },
+    "MetadataViews": {
+      "source": "./src/flow/cadence/contracts/utility/MetadataViews.cdc",
+      "aliases": {
+        "emulator": "0xf8d6e0586b0a20c7"
+      }
+    },
+    "NonFungibleToken": {
+      "source": "./src/flow/cadence/contracts/utility/NonFungibleToken.cdc",
+      "aliases": {
+        "emulator": "0xf8d6e0586b0a20c7"
+      }
+    },
+    "RockPaperScissorsGame": {
+      "source": "./src/flow/cadence/contracts/RockPaperScissorsGame.cdc",
+      "aliases": {
+        "emulator": "0xf8d6e0586b0a20c7"
+      }
+    }
+  },
   "networks": {
     "emulator": "127.0.0.1:3569",
     "mainnet": "access.mainnet.nodes.onflow.org:9000",
@@ -7,6 +56,19 @@
   "accounts": {
     "emulator-account": {
       "fromFile": "./emulator.private.json"
+    }
+  },
+  "deployments": {
+    "emulator": {
+      "emulator-account": [
+        "FungibleToken",
+        "NonFungibleToken",
+        "MetadataViews",
+        "GamingMetadataViews",
+        "GamePieceNFT",
+        "DynamicNFT",
+        "RockPaperScissorsGame"
+      ]
     }
   }
 }
