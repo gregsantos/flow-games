@@ -6,8 +6,6 @@ export default function Index() {
   const { currentUser, showGreeting } = useAppContext();
   const { loggedIn } = currentUser || { loggedIn: null };
 
-  console.log("appContext", currentUser);
-
   return (
     <>{!currentUser && !loggedIn ? <AuthTerminal /> : <LandingTerminal />}</>
   );

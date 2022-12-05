@@ -1,4 +1,5 @@
 import RockPaperScissorsGame from 0xRockPaperScissorsGame
+// import RockPaperScissorsGame from "../contracts/RockPaperScissorsGame.cdc"
 
 /// Returns true if the given address has a GamePlayerPublic Capability
 /// configured at the expected path. A player would run this script

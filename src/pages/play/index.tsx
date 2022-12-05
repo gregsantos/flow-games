@@ -1,16 +1,11 @@
 import { useRouter } from "next/router";
-import { ScreenLayout } from "../../components/";
+import { Box } from "@chakra-ui/react";
 import { Terminal, useEventQueue, textLine, textWord } from "crt-terminal";
 import useUtils from "../../utils";
-import useHooks from "../../hooks";
-
 import { BANNERS } from "../../constants";
+import { ScreenLayout } from "../../components";
 
-export default function AuthTerminal() {
-  const { useCurrentUser } = useHooks();
-  const currentUser = useCurrentUser();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { loggedIn } = currentUser || {};
+export default function PlayHome() {
   const router = useRouter();
   const { delay } = useUtils();
   const eventQueue = useEventQueue();
@@ -18,45 +13,75 @@ export default function AuthTerminal() {
 
   return (
     <ScreenLayout title="Welcome to Flow Games">
-      <div className="react-terminal">
+      <Box className="react-terminal">
         <Terminal
           queue={eventQueue}
           banner={[
-            textLine({ words: [textWord({ characters: BANNERS.GAME_LIST })] }),
+            textLine({ words: [textWord({ characters: BANNERS.HOME })] }),
           ]}
-          onCommand={(command) => {
-            switch (command) {
-              case "9":
+          printer={{ printerSpeed: 20, charactersPerTick: 15 }}
+          onCommand={(c) => {
+            const command = c.toLowerCase();
+            if (command === "help") {
+              print([
+                textLine({
+                  words: [
+                    textWord({
+                      characters: `I would suggest you play Rock Paper Scissors`,
+                    }),
+                  ],
+                }),
+              ]);
+            } else if (command === "lg") {
+              print([
+                textLine({
+                  words: [
+                    textWord({
+                      characters: BANNERS.GAME_LIST,
+                    }),
+                  ],
+                }),
+              ]);
+            } else if (
+              ["1", "2", "3", "4", "5", "6", "7", "8", "9"].includes(command)
+            ) {
+              if (command === "9") {
                 print([
                   textLine({
                     words: [
                       textWord({
                         characters:
-                          "Wise choice, let's play Rock Paper Scissors",
+                          "Wise choice, let's play Rock Paper Scissors!",
                       }),
                     ],
                   }),
                 ]);
                 delay(1500).then(() => router.push("/play/rps"));
-
-                break;
-
-              default:
+              } else {
                 print([
                   textLine({
                     words: [
                       textWord({
-                        characters:
-                          "Wouldn't you prefer a good game of Rock Paper Scissors?",
+                        characters: `Wouldn't you prefer a good game of Rock Paper Scissors?`,
                       }),
                     ],
                   }),
                 ]);
-                break;
+              }
+            } else {
+              print([
+                textLine({
+                  words: [
+                    textWord({
+                      characters: "Please enter a valid command",
+                    }),
+                  ],
+                }),
+              ]);
             }
           }}
         />
-      </div>
+      </Box>
     </ScreenLayout>
   );
 }
