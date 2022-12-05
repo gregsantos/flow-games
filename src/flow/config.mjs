@@ -10,5 +10,5 @@ config({
   "accessNode.api": ACCESS_NODE_URLS[flowNetwork],
   "discovery.wallet": `https://fcl-discovery.onflow.org/${flowNetwork}/authn`,
   "app.detail.icon": "https://avatars.githubusercontent.com/u/62387156?v=4",
-  "app.detail.title": "FCL Next Scaffold",
+  "app.detail.title": "Flow Games",
 }).load({ flowJSON });
