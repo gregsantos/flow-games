@@ -3,7 +3,7 @@
  * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation.
  * This is especially useful for Docker builds.
  */
-import CadencePlugin from "cadence-webpack-plugin";
+import FlowCadencePlugin from "flow-cadence-plugin";
 
 !process.env.SKIP_ENV_VALIDATION && (await import("./src/env/server.mjs"));
 
@@ -17,29 +17,18 @@ const config = {
     defaultLocale: "en",
   },
   webpack: (config) => {
-    config.plugins.push(new CadencePlugin());
-
-    return config;
-  },
-};
-/*
-module.exports = {
-  reactStrictMode: false,
-  swcMinify: true,
-  i18n: {
-    locales: ["en"],
-    defaultLocale: "en",
-  },
-  webpack: (config) => {
+    config.module.rules.push({
+      test: /\.cdc$/,
+      use: "raw-loader",
+    });
     config.plugins.push(
       new FlowCadencePlugin({
-        network: process.env.FLOW_NETWORK,
-        deployOnChange: true,
-        update: true,
+        network: process.env.NEXT_PUBLIC_FLOW_NETWORK,
       })
     );
 
     return config;
   },
-}; */
+};
+
 export default config;
